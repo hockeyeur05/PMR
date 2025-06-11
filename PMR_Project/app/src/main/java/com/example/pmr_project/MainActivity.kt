@@ -44,12 +44,13 @@ class MainActivity : ComponentActivity() {
     ) { permissions ->
         if (permissions.all { it.value }) {
             setupArCore()
-            setupSpeechRecognition()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        speechRecognitionManager = SpeechRecognitionManager(this)
         
         checkAndRequestPermissions()
 
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MainScreen(
-                        speechRecognitionManager = remember { speechRecognitionManager }
+                        speechRecognitionManager = speechRecognitionManager
                     )
                 }
             }
@@ -76,7 +77,6 @@ class MainActivity : ComponentActivity() {
             permissionLauncher.launch(permissionsToRequest)
         } else {
             setupArCore()
-            setupSpeechRecognition()
         }
     }
 
@@ -91,10 +91,6 @@ class MainActivity : ComponentActivity() {
         } catch (e: Exception) {
             // Gérer les autres erreurs
         }
-    }
-
-    private fun setupSpeechRecognition() {
-        speechRecognitionManager = SpeechRecognitionManager(this)
     }
 
     override fun onDestroy() {
