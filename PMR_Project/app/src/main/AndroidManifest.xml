@@ -33,8 +33,15 @@
             </intent-filter>
         </activity>
         
-        <!-- Meta-data pour ARCore -->
-        <meta-data android:name="com.google.ar.core" android:value="required" />
+        <!-- Activité de démo -->
+        <activity
+            android:name=".demo.DemoActivity"
+            android:exported="false"
+            android:label="Mode Démo"
+            android:theme="@style/Theme.PMR_Project" />
+        
+        <!-- Meta-data pour ARCore (optionnel pour la démo) -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
     </application>
 
 </manifest>

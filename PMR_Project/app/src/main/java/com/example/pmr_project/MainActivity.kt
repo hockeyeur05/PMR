@@ -1,6 +1,7 @@
 package com.example.pmr_project
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -21,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.example.pmr_project.demo.DemoActivity
+import com.example.pmr_project.demo.DemoModeManager
 import com.example.pmr_project.speech.SpeechRecognitionManager
 import com.example.pmr_project.ui.components.VoiceCommandButton
 import com.example.pmr_project.ui.theme.PMR_ProjectTheme
@@ -43,17 +46,47 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         if (permissions.all { it.value }) {
-            setupArCore()
+            checkArCoreAndProceed()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Vérifier d'abord si on doit utiliser le mode démo (avant toute autre logique)
+        if (com.example.pmr_project.demo.DemoModeManager.shouldUseDemoMode(this)) {
+            val intent = Intent(this, com.example.pmr_project.demo.DemoActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
         super.onCreate(savedInstanceState)
-        
         speechRecognitionManager = SpeechRecognitionManager(this)
-        
         checkAndRequestPermissions()
+    }
 
+    private fun checkAndRequestPermissions() {
+        val permissionsToRequest = requiredPermissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
+
+        if (permissionsToRequest.isNotEmpty()) {
+            permissionLauncher.launch(permissionsToRequest)
+        } else {
+            checkArCoreAndProceed()
+        }
+    }
+
+    private fun checkArCoreAndProceed() {
+        // Vérifier à nouveau ARCore avant de continuer
+        if (DemoModeManager.shouldUseDemoMode(this)) {
+            // ARCore n'est pas disponible, rediriger vers le mode démo
+            val intent = Intent(this, DemoActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+        
+        // ARCore est disponible, continuer avec l'application normale
+        setupArCore()
         setContent {
             PMR_ProjectTheme {
                 Surface(
@@ -65,18 +98,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
             }
-        }
-    }
-
-    private fun checkAndRequestPermissions() {
-        val permissionsToRequest = requiredPermissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }.toTypedArray()
-
-        if (permissionsToRequest.isNotEmpty()) {
-            permissionLauncher.launch(permissionsToRequest)
-        } else {
-            setupArCore()
         }
     }
 
