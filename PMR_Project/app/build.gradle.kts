@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
     id("com.google.gms.google-services")
+    id("kotlin-parcelize")
 }
 
 java {
@@ -95,7 +96,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-basement:18.3.0")
     implementation("com.google.android.gms:play-services-tasks:18.1.0")
     
-    // ARCore for AR features
+    // ARCore for AR features (simplifié)
     implementation("com.google.ar:core:1.40.0")
     
     // CameraX for camera features
@@ -103,8 +104,12 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
     
-    // ML Kit for QR code scanning
-    // implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    // ML Kit for QR code scanning (via Google Play Services)
+    implementation("com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0")
+    
+    // ZXing for QR code generation
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     
     // Firebase for real-time data sync
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
@@ -121,8 +126,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     
-    // Android Speech Recognition API
-    // implementation("androidx.speech:speech:1.0.0-alpha01")
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+    
+    // ViewModel Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
     
     // Testing dependencies
     testImplementation(libs.junit)

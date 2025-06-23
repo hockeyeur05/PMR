@@ -2,14 +2,37 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissions pour la reconnaissance vocale -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    
-    <!-- Permissions pour la caméra et AR -->
+    <!-- Permissions pour AR -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
+    <!-- Permissions pour reconnaissance vocale -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    
+    <!-- Permissions pour stockage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
+    
+    <!-- Permissions pour notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- Permissions pour Bluetooth (pour les lunettes AR) -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <!-- Features requises -->
     <uses-feature android:name="android.hardware.camera" android:required="true" />
-    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="true" />
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -21,27 +44,66 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PMR_Project"
         tools:targetApi="31">
+
+        <!-- Configuration ARCore -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
+        <!-- Configuration Firebase -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="pmr_notifications" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.PMR_Project">
+            android:theme="@style/Theme.PMR_Project"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <!-- Activité de démo -->
+
         <activity
             android:name=".demo.DemoActivity"
             android:exported="false"
-            android:label="Mode Démo"
+            android:theme="@style/Theme.PMR_Project"
+            android:screenOrientation="landscape" />
+
+        <activity
+            android:name=".ar.ARActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
             android:theme="@style/Theme.PMR_Project" />
-        
-        <!-- Meta-data pour ARCore (optionnel pour la démo) -->
-        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
+        <activity
+            android:name=".ar.ARWorkspaceActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.PMR_Project" />
+
+        <activity
+            android:name=".qr.QRScannerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PMR_Project"
+            android:screenOrientation="landscape" />
+
+        <!-- Service pour la reconnaissance vocale en arrière-plan -->
+        <service
+            android:name=".speech.SpeechRecognitionService"
+            android:exported="false" />
+
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <meta-data
+        android:name="com.google.mlkit.vision.DEPENDENCIES"
+        android:value="barcode" />
 
 </manifest>
